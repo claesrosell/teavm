@@ -144,8 +144,8 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
         } else {
             A[] array = generator.apply(estimatedSize);
             ArrayFillingConsumer<A> consumer = new ArrayFillingConsumer<>(array);
-            boolean done = next(consumer);
-            assert done : "next() should have reported done status";
+            boolean wantsMore = next(consumer);
+            assert !wantsMore : "next() should have reported done status";
             if (consumer.index < array.length) {
                 array = Arrays.copyOf(array, consumer.index);
             }
@@ -156,24 +156,24 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
     @Override
     public T reduce(T identity, BinaryOperator<T> accumulator) {
         TReducingConsumer<T> consumer = new TReducingConsumer<>(accumulator, identity);
-        boolean done = next(consumer);
-        assert done : "next() should have returned true";
+        boolean wantsMore = next(consumer);
+        assert !wantsMore : "next() should have returned true";
         return consumer.result;
     }
 
     @Override
     public Optional<T> reduce(BinaryOperator<T> accumulator) {
         TReducingConsumer<T> consumer = new TReducingConsumer<>(accumulator, null);
-        boolean done = next(consumer);
-        assert done : "next() should have returned true";
+        boolean wantsMore = next(consumer);
+        assert !wantsMore : "next() should have returned true";
         return Optional.ofNullable(consumer.result);
     }
 
     @Override
     public <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
         TReducingConsumer2<T, U> consumer = new TReducingConsumer2<>(accumulator, identity);
-        boolean done = next(consumer);
-        assert done : "next() should have returned true";
+        boolean wantsMore = next(consumer);
+        assert !wantsMore : "next() should have returned true";
         return consumer.result;
     }
 
