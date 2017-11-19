@@ -25,6 +25,7 @@ public class TFlatMappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
     private TStream<? extends T> current;
     private Iterator<? extends T> iterator;
     private Function<? super S, ? extends TStream<? extends T>> mapper;
+    private boolean done;
 
     public TFlatMappingStreamImpl(TSimpleStreamImpl<S> sourceStream,
             Function<? super S, ? extends TStream<? extends T>> mapper) {
@@ -34,6 +35,9 @@ public class TFlatMappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
 
     @Override
     protected boolean next(Predicate<? super T> consumer) {
+        if (done) {
+            return true;
+        }
         while (true) {
             if (current == null) {
                 boolean hasMore = sourceStream.next(e -> {
@@ -41,6 +45,7 @@ public class TFlatMappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
                     return false;
                 });
                 if (!hasMore) {
+                    done = true;
                     return false;
                 }
             }
@@ -50,6 +55,7 @@ public class TFlatMappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
                 if (castCurrent.next(consumer::test)) {
                     return true;
                 }
+                current = null;
             } else {
                 iterator = current.iterator();
                 while (iterator.hasNext()) {
@@ -59,6 +65,7 @@ public class TFlatMappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
                     }
                 }
                 iterator = null;
+                current = null;
             }
         }
     }
