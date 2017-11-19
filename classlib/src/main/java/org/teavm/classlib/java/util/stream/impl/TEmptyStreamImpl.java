@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Alexey Andreev.
+ *  Copyright 2017 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,12 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util;
+package org.teavm.classlib.java.util.stream.impl;
 
-public interface TIterator<E> {
-    boolean hasNext();
+import java.util.function.Predicate;
 
-    E next();
+public class TEmptyStreamImpl<T> extends TSimpleStreamImpl<T> {
+    @Override
+    protected boolean next(Predicate<? super T> consumer) {
+        return false;
+    }
 
-    void remove();
+    @Override
+    protected int estimateSize() {
+        return 0;
+    }
+
+    @Override
+    public long count() {
+        return 1;
+    }
 }

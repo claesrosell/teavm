@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Alexey Andreev.
+ *  Copyright 2017 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,30 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util;
+package org.teavm.classlib.java.util.stream;
 
-public interface TList<E> extends TCollection<E> {
-    boolean addAll(int index, TCollection<? extends E> c);
+import java.util.Iterator;
+import java.util.Spliterator;
 
-    E get(int index);
+public interface TBaseStream<T, S extends TBaseStream<T, S>> extends AutoCloseable {
+    Iterator<T> iterator();
 
-    E set(int index, E element);
+    Spliterator<T> spliterator();
 
-    void add(int index, E element);
+    boolean isParallel();
 
-    E remove(int index);
+    S sequential();
 
-    int indexOf(Object o);
+    S parallel();
 
-    int lastIndexOf(Object o);
+    S unordered();
 
-    TListIterator<E> listIterator();
-
-    TListIterator<E> listIterator(int index);
-
-    TList<E> subList(int fromIndex, int toIndex);
-
-    default void sort(TComparator<? super E> c) {
-        TCollections.sort(this, c);
-    }
+    S onClose(Runnable closeHandler);
 }

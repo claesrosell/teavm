@@ -29,6 +29,8 @@ import org.teavm.classlib.java.lang.TObject;
 import org.teavm.classlib.java.lang.TString;
 import org.teavm.classlib.java.lang.TStringBuilder;
 import org.teavm.classlib.java.lang.reflect.TArray;
+import org.teavm.classlib.java.util.stream.TStream;
+import org.teavm.classlib.java.util.stream.impl.TArrayStreamImpl;
 
 public class TArrays extends TObject {
     public static char[] copyOf(char[] array, int length) {
@@ -1519,7 +1521,7 @@ public class TArrays extends TObject {
 
     public static TString deepToString(Object[] a) {
         TStringBuilder sb = new TStringBuilder();
-        deepToString(a, sb, new TArrayList<Object[]>());
+        deepToString(a, sb, new TArrayList<>());
         return TString.wrap(sb.toString());
     }
 
@@ -1547,5 +1549,9 @@ public class TArrays extends TObject {
         } else {
             out.append(TObject.wrap(a));
         }
+    }
+
+    public static <T> TStream<T> stream(T[] array) {
+        return new TArrayStreamImpl<>(array);
     }
 }

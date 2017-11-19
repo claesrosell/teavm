@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Alexey Andreev.
+ *  Copyright 2017 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,30 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util;
+package org.teavm.classlib.java.util.stream;
 
-public interface TList<E> extends TCollection<E> {
-    boolean addAll(int index, TCollection<? extends E> c);
+import java.util.Spliterator;
+import org.teavm.classlib.java.util.stream.impl.TStreamOverSpliterator;
 
-    E get(int index);
+public final class TStreamSupport {
+    private TStreamSupport() {
+    }
 
-    E set(int index, E element);
-
-    void add(int index, E element);
-
-    E remove(int index);
-
-    int indexOf(Object o);
-
-    int lastIndexOf(Object o);
-
-    TListIterator<E> listIterator();
-
-    TListIterator<E> listIterator(int index);
-
-    TList<E> subList(int fromIndex, int toIndex);
-
-    default void sort(TComparator<? super E> c) {
-        TCollections.sort(this, c);
+    public static <T> TStream<T> stream(Spliterator<T> spliterator, boolean parallel) {
+        return new TStreamOverSpliterator<>(spliterator);
     }
 }
