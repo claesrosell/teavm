@@ -108,7 +108,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public TStream<T> skip(long n) {
-        return null;
+        return new TSkippingStreamImpl<>(this, (int) n);
     }
 
     @Override
