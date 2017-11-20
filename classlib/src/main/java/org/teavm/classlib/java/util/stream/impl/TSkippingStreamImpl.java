@@ -26,6 +26,7 @@ public class TSkippingStreamImpl<T> extends TSimpleStreamImpl<T> {
     public TSkippingStreamImpl(TSimpleStreamImpl<T> sourceStream, int skip) {
         this.sourceStream = sourceStream;
         this.skip = skip;
+        remaining = skip;
     }
 
     @Override
