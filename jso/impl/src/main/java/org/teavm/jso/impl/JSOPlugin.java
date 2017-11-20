@@ -16,6 +16,7 @@
 package org.teavm.jso.impl;
 
 import org.teavm.backend.javascript.TeaVMJavaScriptHost;
+import org.teavm.vm.TeaVMPluginUtil;
 import org.teavm.vm.spi.TeaVMHost;
 import org.teavm.vm.spi.TeaVMPlugin;
 
@@ -33,5 +34,7 @@ public class JSOPlugin implements TeaVMPlugin {
         JSAliasRenderer aliasRenderer = new JSAliasRenderer();
         host.add(dependencyListener);
         host.getExtension(TeaVMJavaScriptHost.class).add(aliasRenderer);
+
+        TeaVMPluginUtil.handleNatives(host, JS.class);
     }
 }

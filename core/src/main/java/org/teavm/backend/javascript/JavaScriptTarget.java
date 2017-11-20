@@ -48,6 +48,7 @@ import org.teavm.debugging.information.SourceLocation;
 import org.teavm.dependency.DependencyAnalyzer;
 import org.teavm.dependency.DependencyListener;
 import org.teavm.dependency.MethodDependency;
+import org.teavm.interop.PlatformMarker;
 import org.teavm.model.BasicBlock;
 import org.teavm.model.CallLocation;
 import org.teavm.model.ClassHolder;
@@ -322,10 +323,14 @@ public class JavaScriptTarget implements TeaVMTarget, TeaVMJavaScriptHost {
     private void preprocessNativeMethod(MethodHolder method) {
         if (!method.getModifiers().contains(ElementModifier.NATIVE)
                 || methodGenerators.get(method.getReference()) != null
-                || methodInjectors.get(method.getReference()) != null
-                || method.getAnnotations().get(GeneratedBy.class.getName()) != null
-                || method.getAnnotations().get(InjectedBy.class.getName()) != null) {
+                || methodInjectors.get(method.getReference()) != null) {
             return;
+        }
+        if (!isBootstrap()) {
+            if (method.getAnnotations().get(GeneratedBy.class.getName()) != null
+                    || method.getAnnotations().get(InjectedBy.class.getName()) != null) {
+                return;
+            }
         }
         method.getModifiers().remove(ElementModifier.NATIVE);
 
@@ -362,6 +367,11 @@ public class JavaScriptTarget implements TeaVMTarget, TeaVMJavaScriptHost {
 
         controller.getDiagnostics().error(new CallLocation(method.getReference()),
                 "Native method {{m0}} has no implementation",  method.getReference());
+    }
+
+    @PlatformMarker
+    private static boolean isBootstrap() {
+        return false;
     }
 
     private void emitCFG(DebugInformationEmitter emitter, Program program) {
