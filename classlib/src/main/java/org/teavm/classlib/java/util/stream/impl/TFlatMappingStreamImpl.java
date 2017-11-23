@@ -40,19 +40,21 @@ public class TFlatMappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
         }
         while (true) {
             if (current == null) {
+                if (done) {
+                    return false;
+                }
                 boolean hasMore = sourceStream.next(e -> {
                     current = mapper.apply(e);
                     return false;
                 });
                 if (!hasMore) {
                     done = true;
-                    return false;
                 }
             }
             if (current instanceof TSimpleStreamImpl) {
                 @SuppressWarnings("unchecked")
                 TSimpleStreamImpl<? extends T> castCurrent = (TSimpleStreamImpl<? extends T>) current;
-                if (castCurrent.next(consumer::test)) {
+                if (castCurrent.next(consumer)) {
                     return true;
                 }
                 current = null;

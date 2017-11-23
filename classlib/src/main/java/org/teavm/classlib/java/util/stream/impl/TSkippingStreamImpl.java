@@ -21,7 +21,6 @@ public class TSkippingStreamImpl<T> extends TSimpleStreamImpl<T> {
     private TSimpleStreamImpl<T> sourceStream;
     private int skip;
     private int remaining;
-    private boolean done;
 
     public TSkippingStreamImpl(TSimpleStreamImpl<T> sourceStream, int skip) {
         this.sourceStream = sourceStream;
@@ -32,16 +31,13 @@ public class TSkippingStreamImpl<T> extends TSimpleStreamImpl<T> {
     @Override
     protected boolean next(Predicate<? super T> consumer) {
         if (remaining > 0) {
-            done = !sourceStream.next(e -> {
+            sourceStream.next(e -> {
                 if (remaining == 0) {
                     return false;
                 }
                 remaining--;
                 return true;
             });
-        }
-        if (done) {
-            return false;
         }
         return sourceStream.next(consumer);
     }
