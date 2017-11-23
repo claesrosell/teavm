@@ -21,15 +21,22 @@ import java.util.function.Predicate;
 class TReducingConsumer<T> implements Predicate<T> {
     private BinaryOperator<T> accumulator;
     T result;
+    boolean initialized;
 
-    TReducingConsumer(BinaryOperator<T> accumulator, T result) {
+    TReducingConsumer(BinaryOperator<T> accumulator, T result, boolean initialized) {
         this.accumulator = accumulator;
         this.result = result;
+        this.initialized = initialized;
     }
 
     @Override
     public boolean test(T t) {
-        result = accumulator.apply(result, t);
+        if (!initialized) {
+            result = t;
+            initialized = true;
+        } else {
+            result = accumulator.apply(result, t);
+        }
         return true;
     }
 }

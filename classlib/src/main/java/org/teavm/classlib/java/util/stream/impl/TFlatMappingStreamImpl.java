@@ -35,9 +35,6 @@ public class TFlatMappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
 
     @Override
     protected boolean next(Predicate<? super T> consumer) {
-        if (done) {
-            return true;
-        }
         while (true) {
             if (current == null) {
                 if (done) {

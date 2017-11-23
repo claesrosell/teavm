@@ -29,9 +29,12 @@ public class TIterateStream<T> extends TSimpleStreamImpl<T> {
 
     @Override
     protected boolean next(Predicate<? super T> consumer) {
-        while (consumer.test(value)) {
+        while (true) {
+            T valueToReport = value;
             value = f.apply(value);
+            if (!consumer.test(valueToReport)) {
+                return true;
+            }
         }
-        return true;
     }
 }

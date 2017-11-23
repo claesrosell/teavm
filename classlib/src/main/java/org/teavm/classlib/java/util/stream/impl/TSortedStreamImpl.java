@@ -21,22 +21,18 @@ import java.util.function.Predicate;
 
 public class TSortedStreamImpl<T> extends TSimpleStreamImpl<T> {
     private TSimpleStreamImpl<T> sourceStream;
-    private Comparator<? super T> comparator;
     private T[] array;
     private int index;
 
+    @SuppressWarnings("unchecked")
     public TSortedStreamImpl(TSimpleStreamImpl<T> sourceStream, Comparator<? super T> comparator) {
         this.sourceStream = sourceStream;
-        this.comparator = comparator;
+        array = (T[]) sourceStream.toArray(Object[]::new);
+        Arrays.sort(array, comparator);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected boolean next(Predicate<? super T> consumer) {
-        if (array == null) {
-            array = (T[]) sourceStream.toArray(Object[]::new);
-            Arrays.sort(array, comparator);
-        }
         while (index < array.length) {
             if (!consumer.test(array[index++])) {
                 break;

@@ -34,14 +34,10 @@ public class TLimitingStreamImpl<T> extends TSimpleStreamImpl<T> {
             return false;
         }
         boolean result = sourceStream.next(e -> {
-            if (remaining == 0) {
+            if (remaining-- == 0) {
                 return false;
             }
-            boolean wantsMore = consumer.test(e);
-            if (wantsMore) {
-                remaining--;
-            }
-            return wantsMore;
+            return consumer.test(e);
         });
         if (!result) {
             remaining = 0;

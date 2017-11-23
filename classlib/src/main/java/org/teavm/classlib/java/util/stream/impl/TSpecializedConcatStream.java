@@ -30,13 +30,17 @@ public class TSpecializedConcatStream<T> extends TSimpleStreamImpl<T> {
 
     @Override
     protected boolean next(Predicate<? super T> consumer) {
+        if (current == null) {
+            return false;
+        }
         while (true) {
-            if (!current.next(consumer)) {
+            if (current.next(consumer)) {
                 return true;
             }
             if (current == first) {
                 current = second;
             } else {
+                current = null;
                 return false;
             }
         }

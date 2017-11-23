@@ -31,13 +31,9 @@ public class TSkippingStreamImpl<T> extends TSimpleStreamImpl<T> {
     @Override
     protected boolean next(Predicate<? super T> consumer) {
         if (remaining > 0) {
-            sourceStream.next(e -> {
-                if (remaining == 0) {
-                    return false;
-                }
-                remaining--;
-                return true;
-            });
+            if (!sourceStream.next(e -> --remaining > 0)) {
+                return false;
+            }
         }
         return sourceStream.next(consumer);
     }

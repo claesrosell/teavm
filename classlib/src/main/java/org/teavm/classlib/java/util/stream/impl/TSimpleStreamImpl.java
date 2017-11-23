@@ -155,7 +155,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public T reduce(T identity, BinaryOperator<T> accumulator) {
-        TReducingConsumer<T> consumer = new TReducingConsumer<>(accumulator, identity);
+        TReducingConsumer<T> consumer = new TReducingConsumer<>(accumulator, identity, true);
         boolean wantsMore = next(consumer);
         assert !wantsMore : "next() should have returned true";
         return consumer.result;
@@ -163,7 +163,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public Optional<T> reduce(BinaryOperator<T> accumulator) {
-        TReducingConsumer<T> consumer = new TReducingConsumer<>(accumulator, null);
+        TReducingConsumer<T> consumer = new TReducingConsumer<>(accumulator, null, false);
         boolean wantsMore = next(consumer);
         assert !wantsMore : "next() should have returned true";
         return Optional.ofNullable(consumer.result);
