@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Alexey Andreev.
+ *  Copyright 2017 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,20 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util;
+package org.teavm.classlib.java.util.stream.impl.intimpl;
 
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
-public interface TIterator<E> {
-    boolean hasNext();
+public class TFindFirstConsumer<T> implements Predicate<T> {
+    public T result;
 
-    E next();
-
-    void remove();
-
-    default void forEachRemaining(Consumer<? super E> action) {
-        while (hasNext()) {
-            action.accept(next());
-        }
+    @Override
+    public boolean test(T t) {
+        result = t;
+        return false;
     }
 }

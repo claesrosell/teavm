@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014 Alexey Andreev.
+ *  Copyright 2017 Alexey Andreev.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,20 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util;
+package org.teavm.classlib.java.util.stream.impl.intimpl;
 
-import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-public interface TIterator<E> {
-    boolean hasNext();
+public class TGenerateStream<T> extends TSimpleStreamImpl<T> {
+    private Supplier<T> s;
 
-    E next();
+    public TGenerateStream(Supplier<T> s) {
+        this.s = s;
+    }
 
-    void remove();
-
-    default void forEachRemaining(Consumer<? super E> action) {
-        while (hasNext()) {
-            action.accept(next());
+    @Override
+    protected boolean next(Predicate<? super T> consumer) {
+        while (consumer.test(s.get())) {
+            // go on
         }
+        return true;
     }
 }

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl;
+package org.teavm.classlib.java.util.stream.impl.intimpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,83 +26,71 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
+import java.util.function.IntPredicate;
+import java.util.function.IntToDoubleFunction;
+import java.util.function.IntToLongFunction;
+import java.util.function.IntUnaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.function.ToIntFunction;
-import java.util.function.ToLongFunction;
 import org.teavm.classlib.java.util.stream.TCollector;
 import org.teavm.classlib.java.util.stream.TDoubleStream;
 import org.teavm.classlib.java.util.stream.TIntStream;
 import org.teavm.classlib.java.util.stream.TLongStream;
 import org.teavm.classlib.java.util.stream.TStream;
 
-public abstract class TSimpleStreamImpl<T> implements TStream<T> {
+public abstract class TSimpleIntStreamImpl implements TIntStream {
     @Override
-    public TStream<T> filter(Predicate<? super T> predicate) {
-        return new TFilteringStreamImpl<>(this, predicate);
+    public TIntStream filter(IntPredicate predicate) {
+        return new TFilteringIntStreamImpl(this, predicate);
     }
 
     @Override
-    public <R> TStream<R> map(Function<? super T, ? extends R> mapper) {
-        return new TMappingStreamImpl<>(this, mapper);
+    public TIntStream map(IntUnaryOperator mapper) {
+        return new TMappingIntStreamImpl(this, mapper);
     }
 
     @Override
-    public TIntStream mapToInt(ToIntFunction<? super T> mapper) {
+    public <U> TStream<U> mapToObj(IntFunction<? extends U> mapper) {
         return null;
     }
 
     @Override
-    public TLongStream mapToLong(ToLongFunction<? super T> mapper) {
+    public TLongStream mapToLong(IntToLongFunction mapper) {
         return null;
     }
 
     @Override
-    public TDoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
+    public TDoubleStream mapToDouble(IntToDoubleFunction mapper) {
         return null;
     }
 
     @Override
-    public <R> TStream<R> flatMap(Function<? super T, ? extends TStream<? extends R>> mapper) {
-        return new TFlatMappingStreamImpl<>(this, mapper);
+    public TIntStream flatMap(IntFunction<? extends TIntStream> mapper) {
+        return new TFlatMappingIntStreamImpl(this, mapper);
     }
 
     @Override
-    public TIntStream flatMapToInt(Function<? super T, ? extends TIntStream> mapper) {
-        return null;
-    }
-
-    @Override
-    public TLongStream flatMapToLong(Function<? super T, ? extends TLongStream> mapper) {
-        return null;
-    }
-
-    @Override
-    public TStream<T> distinct() {
-        return new TDistinctStreamImpl<>(this);
+    public TIntStream distinct() {
+        return new TDistinctIntStreamImpl(this);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public TStream<T> sorted() {
-        return new TSortedStreamImpl<>(this, (a, b) -> ((Comparable<Object>) a).compareTo(b));
+    public TIntStream sorted() {
+        int[] array = toArray();
+        Arrays.sort(array);
+        return TIntStream.of(array);
     }
 
     @Override
-    public TStream<T> sorted(Comparator<? super T> comparator) {
-        return new TSortedStreamImpl<>(this, comparator);
+    public TIntStream peek(IntConsumer action) {
+        return new TPeekingIntStreamImpl(this, action);
     }
 
     @Override
-    public TStream<T> peek(Consumer<? super T> action) {
-        return new TPeekingStreamImpl<>(this, action);
-    }
-
-    @Override
-    public TStream<T> limit(long maxSize) {
+    public TIntStream limit(long maxSize) {
         return new TLimitingStreamImpl<>(this, (int) maxSize);
     }
 
@@ -155,7 +143,8 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public T reduce(T identity, BinaryOperator<T> accumulator) {
-        TReducingConsumer<T> consumer = new TReducingConsumer<>(accumulator, identity, true);
+        TReducingConsumer<T>
+                consumer = new TReducingConsumer<>(accumulator, identity, true);
         boolean wantsMore = next(consumer);
         assert !wantsMore : "next() should have returned true";
         return consumer.result;
@@ -163,7 +152,8 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public Optional<T> reduce(BinaryOperator<T> accumulator) {
-        TReducingConsumer<T> consumer = new TReducingConsumer<>(accumulator, null, false);
+        TReducingConsumer<T>
+                consumer = new TReducingConsumer<>(accumulator, null, false);
         boolean wantsMore = next(consumer);
         assert !wantsMore : "next() should have returned true";
         return Optional.ofNullable(consumer.result);
@@ -285,7 +275,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
         return -1;
     }
 
-    public abstract boolean next(Predicate<? super T> consumer);
+    protected abstract boolean next(IntPredicate consumer);
 
     class ArrayFillingConsumer<A> implements Predicate<T> {
         A[] array;
