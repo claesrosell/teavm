@@ -13,26 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.IntPredicate;
-import java.util.function.IntUnaryOperator;
 
-public class TMappingIntStreamImpl extends TWrappingIntStreamImpl {
-    private IntUnaryOperator mapper;
-
-    public TMappingIntStreamImpl(TSimpleIntStreamImpl sourceStream, IntUnaryOperator mapper) {
-        super(sourceStream);
-        this.mapper = mapper;
+public class TDistinctIntStreamImpl extends TWrappingIntStreamImpl {
+    public TDistinctIntStreamImpl(TSimpleIntStreamImpl innerStream) {
+        super(innerStream);
     }
 
     @Override
     protected IntPredicate wrap(IntPredicate consumer) {
-        return t -> consumer.test(mapper.applyAsInt(t));
-    }
-
-    @Override
-    public long count() {
-        return sourceStream.count();
+        Set<Integer> visited = new HashSet<>();
+        return e -> {
+            if (!visited.add(e)) {
+                return true;
+            }
+            return consumer.test(e);
+        };
     }
 }

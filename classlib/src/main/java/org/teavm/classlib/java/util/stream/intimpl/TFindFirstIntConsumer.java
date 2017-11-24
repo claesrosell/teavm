@@ -13,31 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
 import java.util.function.IntPredicate;
 
-public abstract class TWrappingIntStreamImpl extends TSimpleIntStreamImpl {
-    TSimpleIntStreamImpl sourceStream;
-
-    public TWrappingIntStreamImpl(TSimpleIntStreamImpl sourceStream) {
-        this.sourceStream = sourceStream;
-    }
+public class TFindFirstIntConsumer implements IntPredicate {
+    public int result;
+    boolean hasAny;
 
     @Override
-    protected boolean next(IntPredicate consumer) {
-        return sourceStream.next(wrap(consumer));
-    }
-
-    protected abstract IntPredicate wrap(IntPredicate consumer);
-
-    @Override
-    protected int estimateSize() {
-        return sourceStream.estimateSize();
-    }
-
-    @Override
-    public void close() throws Exception {
-        sourceStream.close();
+    public boolean test(int t) {
+        hasAny = true;
+        result = t;
+        return false;
     }
 }

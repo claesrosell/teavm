@@ -32,7 +32,7 @@ public class TSortedStreamImpl<T> extends TSimpleStreamImpl<T> {
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    public boolean next(Predicate<? super T> consumer) {
         while (index < array.length) {
             if (!consumer.test(array[index++])) {
                 break;

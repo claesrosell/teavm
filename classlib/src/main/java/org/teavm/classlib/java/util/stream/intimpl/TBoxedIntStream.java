@@ -13,16 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
 import java.util.function.Predicate;
+import org.teavm.classlib.java.util.stream.impl.TSimpleStreamImpl;
 
-public class TCountingConsumer<T> implements Predicate<T> {
-    int count;
+public class TBoxedIntStream extends TSimpleStreamImpl<Integer> {
+    private TSimpleIntStreamImpl source;
+
+    public TBoxedIntStream(TSimpleIntStreamImpl source) {
+        this.source = source;
+    }
 
     @Override
-    public boolean test(T t) {
-        count++;
-        return true;
+    public boolean next(Predicate<? super Integer> consumer) {
+        return source.next(consumer::test);
     }
 }

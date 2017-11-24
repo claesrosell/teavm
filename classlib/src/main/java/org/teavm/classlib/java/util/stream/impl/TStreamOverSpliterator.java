@@ -27,7 +27,7 @@ public class TStreamOverSpliterator<T> extends TSimpleStreamImpl<T> {
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    public boolean next(Predicate<? super T> consumer) {
         AdapterAction<T> action = new AdapterAction<>(consumer);
         while (spliterator.tryAdvance(action)) {
             if (!action.wantsMore) {

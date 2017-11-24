@@ -13,23 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
-public class TLimitingStreamImpl<T> extends TSimpleStreamImpl<T> {
-    private TSimpleStreamImpl<T> sourceStream;
+public class TLimitingIntStreamImpl extends TSimpleIntStreamImpl {
+    private TSimpleIntStreamImpl sourceStream;
     private int limit;
     private int remaining;
 
-    public TLimitingStreamImpl(TSimpleStreamImpl<T> sourceStream, int limit) {
+    public TLimitingIntStreamImpl(TSimpleIntStreamImpl sourceStream, int limit) {
         this.sourceStream = sourceStream;
         this.limit = limit;
         remaining = limit;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    protected boolean next(IntPredicate consumer) {
         if (remaining == 0) {
             return false;
         }

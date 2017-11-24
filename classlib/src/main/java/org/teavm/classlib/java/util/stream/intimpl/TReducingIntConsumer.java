@@ -13,24 +13,30 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.IntConsumer;
+import java.util.function.IntBinaryOperator;
 import java.util.function.IntPredicate;
 
-public class TPeekingIntStreamImpl extends TWrappingIntStreamImpl {
-    private IntConsumer elementConsumer;
+class TReducingIntConsumer implements IntPredicate {
+    private IntBinaryOperator accumulator;
+    int result;
+    boolean initialized;
 
-    public TPeekingIntStreamImpl(TSimpleIntStreamImpl sourceStream, IntConsumer elementConsumer) {
-        super(sourceStream);
-        this.elementConsumer = elementConsumer;
+    TReducingIntConsumer(IntBinaryOperator accumulator, int result, boolean initialized) {
+        this.accumulator = accumulator;
+        this.result = result;
+        this.initialized = initialized;
     }
 
     @Override
-    protected IntPredicate wrap(IntPredicate consumer) {
-        return e -> {
-            elementConsumer.accept(e);
-            return consumer.test(e);
-        };
+    public boolean test(int t) {
+        if (!initialized) {
+            result = t;
+            initialized = true;
+        } else {
+            result = accumulator.applyAsInt(result, t);
+        }
+        return true;
     }
 }

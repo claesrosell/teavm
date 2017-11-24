@@ -17,6 +17,7 @@ package org.teavm.classlib.java.util;
 
 import java.util.Comparator;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
 
 public interface TSpliterator<T> {
     int ORDERED = 16;
@@ -52,5 +53,29 @@ public interface TSpliterator<T> {
 
     default Comparator<? super T> getComparator() {
         throw new IllegalStateException();
+    }
+
+    interface OfPrimitive<T, C, S extends OfPrimitive<T, C, S>> {
+        S trySplit();
+
+        boolean tryAdvance(C action);
+
+        default void forEachRemaining(C action) {
+            while (tryAdvance(action)) {
+                // continue
+            }
+        }
+    }
+
+    interface OfInt extends OfPrimitive<Integer, IntConsumer, OfInt> {
+        default boolean tryAdvance(Consumer<? super Integer> action) {
+            return tryAdvance((IntConsumer) action::accept);
+        }
+
+        default void forEachRemaining(Consumer<? super Integer> action) {
+            while (tryAdvance(action)) {
+                // continue
+            }
+        }
     }
 }

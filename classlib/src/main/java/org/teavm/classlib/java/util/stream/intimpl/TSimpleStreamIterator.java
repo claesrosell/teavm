@@ -13,22 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator;
 
-public class TSimpleStreamIterator<T> implements Iterator<T> {
+public class TSimpleStreamIterator implements PrimitiveIterator.OfInt {
     private static final byte NEEDS_MORE = 0;
     private static final byte HAS_DATA = 1;
     private static final byte LAST_ELEMENT = 2;
     private static final byte DONE = 3;
 
-    private TSimpleStreamImpl<T> stream;
-    private T lastElement;
+    private TSimpleIntStreamImpl stream;
+    private int lastElement;
     private byte state;
 
-    public TSimpleStreamIterator(TSimpleStreamImpl<T> stream) {
+    public TSimpleStreamIterator(TSimpleIntStreamImpl stream) {
         this.stream = stream;
     }
 
@@ -39,13 +39,12 @@ public class TSimpleStreamIterator<T> implements Iterator<T> {
     }
 
     @Override
-    public T next() {
+    public int nextInt() {
         fetchIfNeeded();
         if (state == DONE) {
             throw new NoSuchElementException();
         }
-        T result = lastElement;
-        lastElement = null;
+        int result = lastElement;
         state = state == LAST_ELEMENT ? DONE : NEEDS_MORE;
         return result;
     }

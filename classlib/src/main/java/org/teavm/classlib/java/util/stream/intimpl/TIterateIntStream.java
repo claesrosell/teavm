@@ -13,23 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.function.IntPredicate;
+import java.util.function.IntUnaryOperator;
 
-public class TGenerateStream<T> extends TSimpleStreamImpl<T> {
-    private Supplier<T> s;
+public class TIterateIntStream extends TSimpleIntStreamImpl {
+    private int value;
+    private IntUnaryOperator f;
 
-    public TGenerateStream(Supplier<T> s) {
-        this.s = s;
+    public TIterateIntStream(int value, IntUnaryOperator f) {
+        this.value = value;
+        this.f = f;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
-        while (consumer.test(s.get())) {
-            // go on
+    protected boolean next(IntPredicate consumer) {
+        while (true) {
+            int valueToReport = value;
+            value = f.applyAsInt(value);
+            if (!consumer.test(valueToReport)) {
+                return true;
+            }
         }
-        return true;
     }
 }

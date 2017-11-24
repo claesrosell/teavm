@@ -13,25 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
 import java.util.function.IntPredicate;
 
-public class TFilteringIntStreamImpl<T> extends TWrappingIntStreamImpl {
-    private IntPredicate filter;
-
-    public TFilteringIntStreamImpl(TSimpleIntStreamImpl innerStream, IntPredicate filter) {
-        super(innerStream);
-        this.filter = filter;
+public class TEmptyIntStreamImpl extends TSimpleIntStreamImpl {
+    @Override
+    protected boolean next(IntPredicate consumer) {
+        return false;
     }
 
     @Override
-    protected IntPredicate wrap(IntPredicate consumer) {
-        return t -> {
-            if (!filter.test(t)) {
-                return true;
-            }
-            return consumer.test(t);
-        };
+    protected int estimateSize() {
+        return 0;
+    }
+
+    @Override
+    public long count() {
+        return 1;
     }
 }

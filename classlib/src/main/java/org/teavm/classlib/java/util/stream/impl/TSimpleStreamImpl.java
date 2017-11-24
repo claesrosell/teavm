@@ -126,7 +126,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return toArray(Object[]::new);
     }
 
     @Override

@@ -13,23 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
-public class TSkippingStreamImpl<T> extends TSimpleStreamImpl<T> {
-    private TSimpleStreamImpl<T> sourceStream;
+public class TSkippingIntStreamImpl extends TSimpleIntStreamImpl {
+    private TSimpleIntStreamImpl sourceStream;
     private int skip;
     private int remaining;
 
-    public TSkippingStreamImpl(TSimpleStreamImpl<T> sourceStream, int skip) {
+    public TSkippingIntStreamImpl(TSimpleIntStreamImpl sourceStream, int skip) {
         this.sourceStream = sourceStream;
         this.skip = skip;
         remaining = skip;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    protected boolean next(IntPredicate consumer) {
         if (remaining > 0) {
             if (!sourceStream.next(e -> --remaining > 0)) {
                 return false;

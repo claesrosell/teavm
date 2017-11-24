@@ -13,28 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.PrimitiveIterator;
 import java.util.Spliterator;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
+import java.util.function.IntBinaryOperator;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.IntToDoubleFunction;
 import java.util.function.IntToLongFunction;
 import java.util.function.IntUnaryOperator;
-import java.util.function.Predicate;
+import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
-import org.teavm.classlib.java.util.stream.TCollector;
 import org.teavm.classlib.java.util.stream.TDoubleStream;
 import org.teavm.classlib.java.util.stream.TIntStream;
 import org.teavm.classlib.java.util.stream.TLongStream;
@@ -91,21 +87,21 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
 
     @Override
     public TIntStream limit(long maxSize) {
-        return new TLimitingStreamImpl<>(this, (int) maxSize);
+        return new TLimitingIntStreamImpl(this, (int) maxSize);
     }
 
     @Override
-    public TStream<T> skip(long n) {
-        return new TSkippingStreamImpl<>(this, (int) n);
+    public TIntStream skip(long n) {
+        return new TSkippingIntStreamImpl(this, (int) n);
     }
 
     @Override
-    public void forEach(Consumer<? super T> action) {
+    public void forEach(IntConsumer action) {
         forEachOrdered(action);
     }
 
     @Override
-    public void forEachOrdered(Consumer<? super T> action) {
+    public void forEachOrdered(IntConsumer action) {
         next(e -> {
             action.accept(e);
             return true;
@@ -113,25 +109,19 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
     }
 
     @Override
-    public Object[] toArray() {
-        return new Object[0];
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public <A> A[] toArray(IntFunction<A[]> generator) {
+    public int[] toArray() {
         int estimatedSize = estimateSize();
         if (estimatedSize < 0) {
-            List<T> list = new ArrayList<>();
+            List<Integer> list = new ArrayList<>();
             next(list::add);
-            A[] array = generator.apply(list.size());
+            int[] array = new int[list.size()];
             for (int i = 0; i < array.length; ++i) {
-                array[i] = (A) list.get(i);
+                array[i] = list.get(i);
             }
             return array;
         } else {
-            A[] array = generator.apply(estimatedSize);
-            ArrayFillingConsumer<A> consumer = new ArrayFillingConsumer<>(array);
+            int[] array = new int[estimatedSize];
+            ArrayFillingConsumer consumer = new ArrayFillingConsumer(array);
             boolean wantsMore = next(consumer);
             assert !wantsMore : "next() should have reported done status";
             if (consumer.index < array.length) {
@@ -142,33 +132,23 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
     }
 
     @Override
-    public T reduce(T identity, BinaryOperator<T> accumulator) {
-        TReducingConsumer<T>
-                consumer = new TReducingConsumer<>(accumulator, identity, true);
+    public int reduce(int identity, IntBinaryOperator accumulator) {
+        TReducingIntConsumer consumer = new TReducingIntConsumer(accumulator, identity, true);
         boolean wantsMore = next(consumer);
         assert !wantsMore : "next() should have returned true";
         return consumer.result;
     }
 
     @Override
-    public Optional<T> reduce(BinaryOperator<T> accumulator) {
-        TReducingConsumer<T>
-                consumer = new TReducingConsumer<>(accumulator, null, false);
+    public OptionalInt reduce(IntBinaryOperator accumulator) {
+        TReducingIntConsumer consumer = new TReducingIntConsumer(accumulator, 0, false);
         boolean wantsMore = next(consumer);
         assert !wantsMore : "next() should have returned true";
-        return Optional.ofNullable(consumer.result);
+        return consumer.initialized ? OptionalInt.of(consumer.result) : OptionalInt.empty();
     }
 
     @Override
-    public <U> U reduce(U identity, BiFunction<U, ? super T, U> accumulator, BinaryOperator<U> combiner) {
-        TReducingConsumer2<T, U> consumer = new TReducingConsumer2<>(accumulator, identity);
-        boolean wantsMore = next(consumer);
-        assert !wantsMore : "next() should have returned true";
-        return consumer.result;
-    }
-
-    @Override
-    public <R> R collect(Supplier<R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner) {
+    public <R> R collect(Supplier<R> supplier, ObjIntConsumer<R> accumulator, BiConsumer<R, R> combiner) {
         R collection = supplier.get();
         next(e -> {
             accumulator.accept(collection, e);
@@ -178,68 +158,69 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
     }
 
     @Override
-    public <R, A> R collect(TCollector<? super T, A, R> collector) {
-        A collection = collector.supplier().get();
-        BiConsumer<A, ? super T> accumulator = collector.accumulator();
-        next(e -> {
-            accumulator.accept(collection, e);
-            return true;
-        });
-        return collector.finisher().apply(collection);
+    public OptionalInt min() {
+        return reduce(Math::min);
     }
 
     @Override
-    public Optional<T> min(Comparator<? super T> comparator) {
-        return reduce((a, b) -> comparator.compare(a, b) < 0 ? a : b);
-    }
-
-    @Override
-    public Optional<T> max(Comparator<? super T> comparator) {
-        return reduce((a, b) -> comparator.compare(a, b) > 0 ? a : b);
+    public OptionalInt max() {
+        return reduce(Math::max);
     }
 
     @Override
     public long count() {
-        TCountingConsumer<T> consumer = new TCountingConsumer<>();
+        TCountingIntConsumer consumer = new TCountingIntConsumer();
         next(consumer);
         return consumer.count;
     }
 
     @Override
-    public boolean anyMatch(Predicate<? super T> predicate) {
+    public int sum() {
+        TSumIntConsumer consumer = new TSumIntConsumer();
+        next(consumer);
+        return consumer.sum;
+    }
+
+    @Override
+    public boolean anyMatch(IntPredicate predicate) {
         return next(predicate.negate());
     }
 
     @Override
-    public boolean allMatch(Predicate<? super T> predicate) {
+    public boolean allMatch(IntPredicate predicate) {
         return !next(predicate);
     }
 
     @Override
-    public boolean noneMatch(Predicate<? super T> predicate) {
+    public boolean noneMatch(IntPredicate predicate) {
         return !anyMatch(predicate);
     }
 
     @Override
-    public Optional<T> findFirst() {
-        TFindFirstConsumer<T> consumer = new TFindFirstConsumer<>();
+    public OptionalInt findFirst() {
+        TFindFirstIntConsumer consumer = new TFindFirstIntConsumer();
         next(consumer);
-        return Optional.ofNullable(consumer.result);
+        return consumer.hasAny ? OptionalInt.of(consumer.result) : OptionalInt.empty();
     }
 
     @Override
-    public Optional<T> findAny() {
+    public OptionalInt findAny() {
         return findFirst();
     }
 
     @Override
-    public Iterator<T> iterator() {
-        return new TSimpleStreamIterator<>(this);
+    public PrimitiveIterator.OfInt iterator() {
+        return new TSimpleStreamIterator(this);
     }
 
     @Override
-    public Spliterator<T> spliterator() {
+    public Spliterator.OfInt spliterator() {
         return null;
+    }
+
+    @Override
+    public TStream<Integer> boxed() {
+        return new TBoxedIntStream(this);
     }
 
     @Override
@@ -248,23 +229,23 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
     }
 
     @Override
-    public TStream<T> sequential() {
+    public TIntStream sequential() {
         return this;
     }
 
     @Override
-    public TStream<T> parallel() {
+    public TIntStream parallel() {
         return this;
     }
 
     @Override
-    public TStream<T> unordered() {
+    public TIntStream unordered() {
         return this;
     }
 
     @Override
-    public TStream<T> onClose(Runnable closeHandler) {
-        return new TCloseHandlingStream<>(this, closeHandler);
+    public TIntStream onClose(Runnable closeHandler) {
+        return new TCloseHandlingIntStream(this, closeHandler);
     }
 
     @Override
@@ -277,18 +258,18 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
 
     protected abstract boolean next(IntPredicate consumer);
 
-    class ArrayFillingConsumer<A> implements Predicate<T> {
-        A[] array;
+    class ArrayFillingConsumer implements IntPredicate {
+        int[] array;
         int index;
 
-        ArrayFillingConsumer(A[] array) {
+        ArrayFillingConsumer(int[] array) {
             this.array = array;
         }
 
         @Override
         @SuppressWarnings("unchecked")
-        public boolean test(T t) {
-            array[index++] = (A) t;
+        public boolean test(int t) {
+            array[index++] = t;
             return true;
         }
     }

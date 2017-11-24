@@ -13,23 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
-public class TSpecializedConcatStream<T> extends TSimpleStreamImpl<T> {
-    TSimpleStreamImpl<T> first;
-    TSimpleStreamImpl<T> second;
-    TSimpleStreamImpl<T> current;
+public class TSpecializedConcatIntStream extends TSimpleIntStreamImpl {
+    TSimpleIntStreamImpl first;
+    TSimpleIntStreamImpl second;
+    TSimpleIntStreamImpl current;
 
-    public TSpecializedConcatStream(TSimpleStreamImpl<T> first, TSimpleStreamImpl<T> second) {
+    public TSpecializedConcatIntStream(TSimpleIntStreamImpl first, TSimpleIntStreamImpl second) {
         this.first = first;
         this.second = second;
         current = first;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    protected boolean next(IntPredicate consumer) {
         if (current == null) {
             return false;
         }

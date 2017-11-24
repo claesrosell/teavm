@@ -25,7 +25,7 @@ public abstract class TWrappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    public boolean next(Predicate<? super T> consumer) {
         return sourceStream.next(wrap(consumer));
     }
 

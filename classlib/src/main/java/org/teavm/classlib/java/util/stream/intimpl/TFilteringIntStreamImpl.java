@@ -13,28 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
+import java.util.function.IntPredicate;
 
-public class TIterateStream<T> extends TSimpleStreamImpl<T> {
-    private T value;
-    private UnaryOperator<T> f;
+public class TFilteringIntStreamImpl extends TWrappingIntStreamImpl {
+    private IntPredicate filter;
 
-    public TIterateStream(T value, UnaryOperator<T> f) {
-        this.value = value;
-        this.f = f;
+    public TFilteringIntStreamImpl(TSimpleIntStreamImpl innerStream, IntPredicate filter) {
+        super(innerStream);
+        this.filter = filter;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
-        while (true) {
-            T valueToReport = value;
-            value = f.apply(value);
-            if (!consumer.test(valueToReport)) {
+    protected IntPredicate wrap(IntPredicate consumer) {
+        return t -> {
+            if (!filter.test(t)) {
                 return true;
             }
-        }
+            return consumer.test(t);
+        };
     }
 }

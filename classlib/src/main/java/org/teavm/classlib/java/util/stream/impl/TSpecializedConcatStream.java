@@ -29,7 +29,7 @@ public class TSpecializedConcatStream<T> extends TSimpleStreamImpl<T> {
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    public boolean next(Predicate<? super T> consumer) {
         if (current == null) {
             return false;
         }

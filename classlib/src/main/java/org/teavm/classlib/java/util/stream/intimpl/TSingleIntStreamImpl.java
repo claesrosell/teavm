@@ -13,19 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
-public class TSingleStreamImpl<T> extends TSimpleStreamImpl<T> {
-    private T element;
+public class TSingleIntStreamImpl extends TSimpleIntStreamImpl {
+    private int element;
 
-    public TSingleStreamImpl(T element) {
+    public TSingleIntStreamImpl(int element) {
         this.element = element;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    protected boolean next(IntPredicate consumer) {
         consumer.test(element);
         return false;
     }

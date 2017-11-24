@@ -13,21 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
-public class TCloseHandlingStream<T> extends TSimpleStreamImpl<T> {
-    private TSimpleStreamImpl<T> innerStream;
+public class TCloseHandlingIntStream extends TSimpleIntStreamImpl {
+    private TSimpleIntStreamImpl innerStream;
     private Runnable closeHandler;
 
-    public TCloseHandlingStream(TSimpleStreamImpl<T> innerStream, Runnable closeHandler) {
+    public TCloseHandlingIntStream(TSimpleIntStreamImpl innerStream, Runnable closeHandler) {
         this.innerStream = innerStream;
         this.closeHandler = closeHandler;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    protected boolean next(IntPredicate consumer) {
         return innerStream.next(consumer);
     }
 

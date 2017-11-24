@@ -13,20 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
-public class TArrayStreamImpl<T> extends TSimpleStreamImpl<T> {
-    private T[] array;
+public class TArrayIntStreamImpl extends TSimpleIntStreamImpl {
+    private int[] array;
     private int index;
 
-    public TArrayStreamImpl(T[] array) {
+    public TArrayIntStreamImpl(int[] array) {
         this.array = array;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    protected boolean next(IntPredicate consumer) {
         while (index < array.length) {
             if (!consumer.test(array[index++])) {
                 break;

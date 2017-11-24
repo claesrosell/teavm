@@ -13,29 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.BinaryOperator;
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
+import java.util.function.IntSupplier;
 
-class TReducingConsumer<T> implements Predicate<T> {
-    private BinaryOperator<T> accumulator;
-    T result;
-    boolean initialized;
+public class TGenerateIntStream extends TSimpleIntStreamImpl {
+    private IntSupplier s;
 
-    TReducingConsumer(BinaryOperator<T> accumulator, T result, boolean initialized) {
-        this.accumulator = accumulator;
-        this.result = result;
-        this.initialized = initialized;
+    public TGenerateIntStream(IntSupplier s) {
+        this.s = s;
     }
 
     @Override
-    public boolean test(T t) {
-        if (!initialized) {
-            result = t;
-            initialized = true;
-        } else {
-            result = accumulator.apply(result, t);
+    protected boolean next(IntPredicate consumer) {
+        while (consumer.test(s.getAsInt())) {
+            // go on
         }
         return true;
     }

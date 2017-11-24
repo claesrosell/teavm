@@ -13,19 +13,12 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.Iterator;
 import java.util.PrimitiveIterator;
-import java.util.function.Function;
 import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
-import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
-import java.util.stream.IntStream;
 import org.teavm.classlib.java.util.stream.TIntStream;
-import org.teavm.classlib.java.util.stream.TStream;
-import org.teavm.classlib.java.util.stream.impl.TSimpleStreamImpl;
 
 public class TFlatMappingIntStreamImpl extends TSimpleIntStreamImpl {
     private TSimpleIntStreamImpl sourceStream;

@@ -13,23 +13,16 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.BiFunction;
-import java.util.function.Predicate;
+import java.util.function.IntPredicate;
 
-class TReducingConsumer2<T, U> implements Predicate<T> {
-    private BiFunction<U, ? super T, U> accumulator;
-    U result;
-
-    TReducingConsumer2(BiFunction<U, ? super T, U> accumulator, U result) {
-        this.accumulator = accumulator;
-        this.result = result;
-    }
+public class TCountingIntConsumer implements IntPredicate {
+    int count;
 
     @Override
-    public boolean test(T t) {
-        result = accumulator.apply(result, t);
+    public boolean test(int t) {
+        count++;
         return true;
     }
 }

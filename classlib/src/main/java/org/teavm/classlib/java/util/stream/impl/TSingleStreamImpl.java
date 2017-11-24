@@ -25,7 +25,7 @@ public class TSingleStreamImpl<T> extends TSimpleStreamImpl<T> {
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    public boolean next(Predicate<? super T> consumer) {
         consumer.test(element);
         return false;
     }

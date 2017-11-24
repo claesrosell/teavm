@@ -17,6 +17,7 @@ package org.teavm.classlib.java.util.stream;
 
 import java.util.OptionalInt;
 import java.util.PrimitiveIterator;
+import java.util.Spliterator;
 import java.util.function.BiConsumer;
 import java.util.function.IntBinaryOperator;
 import java.util.function.IntConsumer;
@@ -28,7 +29,14 @@ import java.util.function.IntToLongFunction;
 import java.util.function.IntUnaryOperator;
 import java.util.function.ObjIntConsumer;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
+import org.teavm.classlib.java.util.stream.intimpl.TArrayIntStreamImpl;
+import org.teavm.classlib.java.util.stream.intimpl.TEmptyIntStreamImpl;
+import org.teavm.classlib.java.util.stream.intimpl.TGenerateIntStream;
+import org.teavm.classlib.java.util.stream.intimpl.TGenericConcatIntStream;
+import org.teavm.classlib.java.util.stream.intimpl.TIterateIntStream;
+import org.teavm.classlib.java.util.stream.intimpl.TSimpleIntStreamImpl;
+import org.teavm.classlib.java.util.stream.intimpl.TSingleIntStreamImpl;
+import org.teavm.classlib.java.util.stream.intimpl.TSpecializedConcatIntStream;
 
 public interface TIntStream extends TBaseStream<Integer, TIntStream> {
     interface Builder {
@@ -99,31 +107,38 @@ public interface TIntStream extends TBaseStream<Integer, TIntStream> {
     @Override
     PrimitiveIterator.OfInt iterator();
 
+    @Override
+    Spliterator.OfInt spliterator();
+
     static Builder builder() {
         return null;
     }
 
     static TIntStream empty() {
-        return null;
+        return new TEmptyIntStreamImpl();
     }
 
     static TIntStream of(int t) {
-        return null;
+        return new TSingleIntStreamImpl(t);
     }
 
     static TIntStream of(int... values) {
-        return null;
+        return new TArrayIntStreamImpl(values);
     }
 
     static TIntStream iterate(int seed, IntUnaryOperator f) {
-        return null;
+        return new TIterateIntStream(seed, f);
     }
 
     static TIntStream generate(IntSupplier s) {
-        return null;
+        return new TGenerateIntStream(s);
     }
 
-    static IntStream concat(IntStream a, IntStream b) {
-        return null;
+    static TIntStream concat(TIntStream a, TIntStream b) {
+        if (a instanceof TSimpleIntStreamImpl && b instanceof TSimpleIntStreamImpl) {
+            return new TSpecializedConcatIntStream((TSimpleIntStreamImpl) a, (TSimpleIntStreamImpl) b);
+        } else {
+            return new TGenericConcatIntStream(a, b);
+        }
     }
 }

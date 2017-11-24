@@ -13,31 +13,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.Iterator;
-import java.util.function.Predicate;
-import org.teavm.classlib.java.util.stream.TStream;
+import java.util.PrimitiveIterator;
+import java.util.function.IntPredicate;
+import org.teavm.classlib.java.util.stream.TIntStream;
 
-public class TGenericConcatStream<T> extends TSimpleStreamImpl<T> {
-    TStream<? extends T> first;
-    TStream<? extends T> second;
-    Iterator<? extends T> iterator;
+public class TGenericConcatIntStream extends TSimpleIntStreamImpl {
+    TIntStream first;
+    TIntStream second;
+    PrimitiveIterator.OfInt iterator;
     boolean isSecond;
 
-    public TGenericConcatStream(TStream<? extends T> first, TStream<? extends T> second) {
+    public TGenericConcatIntStream(TIntStream first, TIntStream second) {
         this.first = first;
         this.second = second;
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    protected boolean next(IntPredicate consumer) {
         if (iterator == null) {
             iterator = first.iterator();
         }
         while (true) {
             while (iterator.hasNext()) {
-                if (!consumer.test(iterator.next())) {
+                if (!consumer.test(iterator.nextInt())) {
                     return true;
                 }
             }

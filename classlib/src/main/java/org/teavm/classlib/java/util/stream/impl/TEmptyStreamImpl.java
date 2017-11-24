@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 
 public class TEmptyStreamImpl<T> extends TSimpleStreamImpl<T> {
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    public boolean next(Predicate<? super T> consumer) {
         return false;
     }
 

@@ -31,7 +31,7 @@ public class TGenericConcatStream<T> extends TSimpleStreamImpl<T> {
     }
 
     @Override
-    protected boolean next(Predicate<? super T> consumer) {
+    public boolean next(Predicate<? super T> consumer) {
         if (iterator == null) {
             iterator = first.iterator();
         }

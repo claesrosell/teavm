@@ -13,16 +13,24 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.impl.intimpl;
+package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.Predicate;
+import java.util.function.IntConsumer;
+import java.util.function.IntPredicate;
 
-public class TFindFirstConsumer<T> implements Predicate<T> {
-    public T result;
+public class TPeekingIntStreamImpl extends TWrappingIntStreamImpl {
+    private IntConsumer elementConsumer;
+
+    public TPeekingIntStreamImpl(TSimpleIntStreamImpl sourceStream, IntConsumer elementConsumer) {
+        super(sourceStream);
+        this.elementConsumer = elementConsumer;
+    }
 
     @Override
-    public boolean test(T t) {
-        result = t;
-        return false;
+    protected IntPredicate wrap(IntPredicate consumer) {
+        return e -> {
+            elementConsumer.accept(e);
+            return consumer.test(e);
+        };
     }
 }
