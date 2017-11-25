@@ -29,7 +29,7 @@ public class TLimitingIntStreamImpl extends TSimpleIntStreamImpl {
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         if (remaining == 0) {
             return false;
         }

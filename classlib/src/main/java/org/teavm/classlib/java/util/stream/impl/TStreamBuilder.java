@@ -13,30 +13,22 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.intimpl;
+package org.teavm.classlib.java.util.stream.impl;
 
-import java.util.function.IntPredicate;
+import org.teavm.classlib.java.util.TArrayList;
+import org.teavm.classlib.java.util.TList;
+import org.teavm.classlib.java.util.stream.TStream;
 
-public class TSingleIntStreamImpl extends TSimpleIntStreamImpl {
-    private int element;
+public class TStreamBuilder<T> implements TStream.Builder<T> {
+    private TList<T> elements = new TArrayList<>();
 
-    public TSingleIntStreamImpl(int element) {
-        this.element = element;
+    @Override
+    public void accept(T t) {
+        elements.add(t);
     }
 
     @Override
-    public boolean next(IntPredicate consumer) {
-        consumer.test(element);
-        return false;
-    }
-
-    @Override
-    protected int estimateSize() {
-        return 1;
-    }
-
-    @Override
-    public long count() {
-        return 1;
+    public TStream<T> build() {
+        return elements.stream();
     }
 }

@@ -27,7 +27,7 @@ public class TCloseHandlingIntStream extends TSimpleIntStreamImpl {
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         return innerStream.next(consumer);
     }
 

@@ -33,8 +33,10 @@ import org.teavm.classlib.java.lang.TObject;
 import org.teavm.classlib.java.lang.TString;
 import org.teavm.classlib.java.lang.TStringBuilder;
 import org.teavm.classlib.java.lang.reflect.TArray;
+import org.teavm.classlib.java.util.stream.TIntStream;
 import org.teavm.classlib.java.util.stream.TStream;
 import org.teavm.classlib.java.util.stream.impl.TArrayStreamImpl;
+import org.teavm.classlib.java.util.stream.intimpl.TArrayIntStreamImpl;
 
 public class TArrays extends TObject {
     public static char[] copyOf(char[] array, int length) {
@@ -1556,7 +1558,25 @@ public class TArrays extends TObject {
     }
 
     public static <T> TStream<T> stream(T[] array) {
-        return new TArrayStreamImpl<>(array);
+        return new TArrayStreamImpl<>(array, 0, array.length);
+    }
+
+    public static <T> TStream<T> stream(T[] array, int startInclusive, int endExclusive) {
+        if (startInclusive < 0 || endExclusive < startInclusive || endExclusive > array.length) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        return new TArrayStreamImpl<>(array, startInclusive, endExclusive);
+    }
+
+    public static TIntStream stream(int[] array) {
+        return new TArrayIntStreamImpl(array, 0, array.length);
+    }
+
+    public static TIntStream stream(int[] array, int startInclusive, int endExclusive) {
+        if (startInclusive < 0 || endExclusive < startInclusive || endExclusive > array.length) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
+        return new TArrayIntStreamImpl(array, startInclusive, endExclusive);
     }
 
     public static <T> void setAll(T[] array, IntFunction<? extends T> generator) {

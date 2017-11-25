@@ -29,7 +29,7 @@ public class TSkippingIntStreamImpl extends TSimpleIntStreamImpl {
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         if (remaining > 0) {
             if (!sourceStream.next(e -> --remaining > 0)) {
                 return false;

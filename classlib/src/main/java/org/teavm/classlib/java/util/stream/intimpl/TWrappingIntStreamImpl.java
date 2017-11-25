@@ -25,7 +25,7 @@ public abstract class TWrappingIntStreamImpl extends TSimpleIntStreamImpl {
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         return sourceStream.next(wrap(consumer));
     }
 

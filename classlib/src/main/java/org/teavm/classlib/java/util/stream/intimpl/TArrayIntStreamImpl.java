@@ -20,28 +20,33 @@ import java.util.function.IntPredicate;
 public class TArrayIntStreamImpl extends TSimpleIntStreamImpl {
     private int[] array;
     private int index;
+    private int end;
+    private int size;
 
-    public TArrayIntStreamImpl(int[] array) {
+    public TArrayIntStreamImpl(int[] array, int start, int end) {
         this.array = array;
+        index = start;
+        this.end = end;
+        size = end - start;
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
-        while (index < array.length) {
+    public boolean next(IntPredicate consumer) {
+        while (index < end) {
             if (!consumer.test(array[index++])) {
                 break;
             }
         }
-        return index < array.length;
+        return index < end;
     }
 
     @Override
     protected int estimateSize() {
-        return array.length;
+        return size;
     }
 
     @Override
     public long count() {
-        return array.length;
+        return size;
     }
 }

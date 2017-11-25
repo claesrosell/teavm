@@ -13,21 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.intimpl;
+package org.teavm.classlib.java.util.stream.impl;
 
 import java.util.PrimitiveIterator;
-import java.util.function.IntFunction;
+import java.util.function.Function;
 import java.util.function.IntPredicate;
 import org.teavm.classlib.java.util.stream.TIntStream;
+import org.teavm.classlib.java.util.stream.intimpl.TSimpleIntStreamImpl;
 
-public class TFlatMappingIntStreamImpl extends TSimpleIntStreamImpl {
-    private TSimpleIntStreamImpl sourceStream;
+public class TFlatMappingToIntStreamImpl<T> extends TSimpleIntStreamImpl {
+    private TSimpleStreamImpl<T> sourceStream;
     private TIntStream current;
     private PrimitiveIterator.OfInt iterator;
-    private IntFunction<? extends TIntStream> mapper;
+    private Function<? super T, ? extends TIntStream> mapper;
     private boolean done;
 
-    public TFlatMappingIntStreamImpl(TSimpleIntStreamImpl sourceStream, IntFunction<? extends TIntStream> mapper) {
+    public TFlatMappingToIntStreamImpl(TSimpleStreamImpl<T> sourceStream,
+            Function<? super T, ? extends TIntStream> mapper) {
         this.sourceStream = sourceStream;
         this.mapper = mapper;
     }

@@ -31,7 +31,7 @@ public class TGenericConcatIntStream extends TSimpleIntStreamImpl {
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         if (iterator == null) {
             iterator = first.iterator();
         }

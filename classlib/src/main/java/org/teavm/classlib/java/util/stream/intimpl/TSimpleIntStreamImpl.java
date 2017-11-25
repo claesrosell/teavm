@@ -49,7 +49,7 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
 
     @Override
     public <U> TStream<U> mapToObj(IntFunction<? extends U> mapper) {
-        return null;
+        return new TMappingToObjStreamImpl<>(this, mapper);
     }
 
     @Override
@@ -210,7 +210,7 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
 
     @Override
     public PrimitiveIterator.OfInt iterator() {
-        return new TSimpleStreamIterator(this);
+        return new TSimpleIntStreamIterator(this);
     }
 
     @Override
@@ -256,7 +256,7 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
         return -1;
     }
 
-    protected abstract boolean next(IntPredicate consumer);
+    public abstract boolean next(IntPredicate consumer);
 
     class ArrayFillingConsumer implements IntPredicate {
         int[] array;

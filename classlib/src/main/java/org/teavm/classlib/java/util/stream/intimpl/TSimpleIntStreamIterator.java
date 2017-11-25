@@ -18,7 +18,7 @@ package org.teavm.classlib.java.util.stream.intimpl;
 import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator;
 
-public class TSimpleStreamIterator implements PrimitiveIterator.OfInt {
+public class TSimpleIntStreamIterator implements PrimitiveIterator.OfInt {
     private static final byte NEEDS_MORE = 0;
     private static final byte HAS_DATA = 1;
     private static final byte LAST_ELEMENT = 2;
@@ -28,7 +28,7 @@ public class TSimpleStreamIterator implements PrimitiveIterator.OfInt {
     private int lastElement;
     private byte state;
 
-    public TSimpleStreamIterator(TSimpleIntStreamImpl stream) {
+    public TSimpleIntStreamIterator(TSimpleIntStreamImpl stream) {
         this.stream = stream;
     }
 

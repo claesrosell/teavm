@@ -47,6 +47,10 @@ public class TFlatMappingStreamImpl<T, S> extends TSimpleStreamImpl<T> {
                 if (!hasMore) {
                     done = true;
                 }
+                if (current == null) {
+                    done = true;
+                    return false;
+                }
             }
             if (current instanceof TSimpleStreamImpl) {
                 @SuppressWarnings("unchecked")

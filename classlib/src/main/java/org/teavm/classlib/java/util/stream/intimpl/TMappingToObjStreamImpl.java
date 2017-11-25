@@ -15,28 +15,36 @@
  */
 package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.IntPredicate;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import org.teavm.classlib.java.util.stream.impl.TSimpleStreamImpl;
 
-public class TSingleIntStreamImpl extends TSimpleIntStreamImpl {
-    private int element;
+public class TMappingToObjStreamImpl<T> extends TSimpleStreamImpl<T> {
+    private TSimpleIntStreamImpl source;
+    private IntFunction<? extends T> mapper;
 
-    public TSingleIntStreamImpl(int element) {
-        this.element = element;
+    public TMappingToObjStreamImpl(TSimpleIntStreamImpl source, IntFunction<? extends T> mapper) {
+        this.source = source;
+        this.mapper = mapper;
     }
 
     @Override
-    public boolean next(IntPredicate consumer) {
-        consumer.test(element);
-        return false;
+    public boolean next(Predicate<? super T> consumer) {
+        return source.next(e -> consumer.test(mapper.apply(e)));
+    }
+
+    @Override
+    public void close() throws Exception {
+        source.close();
     }
 
     @Override
     protected int estimateSize() {
-        return 1;
+        return source.estimateSize();
     }
 
     @Override
     public long count() {
-        return 1;
+        return source.count();
     }
 }

@@ -22,6 +22,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.IntConsumer;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +46,13 @@ public class StreamTest {
     }
 
     @Test
+    public void mapToIntWorks() {
+        StringBuilder sb = new StringBuilder();
+        Stream.of(1, 2, 3).mapToInt(n -> n * n).forEach(appendIntNumbersTo(sb));
+        assertEquals("1;4;9;", sb.toString());
+    }
+
+    @Test
     public void filterWorks() {
         StringBuilder sb = new StringBuilder();
         Stream.of(1, 2, 3, 4, 5, 6).filter(n -> (n & 1) == 0).forEach(appendNumbersTo(sb));
@@ -62,6 +71,22 @@ public class StreamTest {
 
         sb.setLength(0);
         Stream.of(Stream.of(1, 2), Stream.of(3, 4, 5)).flatMap(n -> n).skip(3).forEach(appendNumbersTo(sb));
+        assertEquals("4;5;", sb.toString());
+    }
+
+    @Test
+    public void flatMapToIntWorks() {
+        StringBuilder sb = new StringBuilder();
+        Stream.of(IntStream.of(1, 2), IntStream.of(3, 4)).flatMapToInt(n -> n).forEach(appendIntNumbersTo(sb));
+        assertEquals("1;2;3;4;", sb.toString());
+
+        sb.setLength(0);
+        Stream.of(IntStream.of(1, 2), IntStream.of(3, 4)).flatMapToInt(n -> n).skip(1).forEach(appendIntNumbersTo(sb));
+        assertEquals("2;3;4;", sb.toString());
+
+        sb.setLength(0);
+        Stream.of(IntStream.of(1, 2), IntStream.of(3, 4, 5)).flatMapToInt(n -> n).skip(3)
+                .forEach(appendIntNumbersTo(sb));
         assertEquals("4;5;", sb.toString());
     }
 
@@ -259,6 +284,10 @@ public class StreamTest {
     }
 
     private Consumer<Integer> appendNumbersTo(StringBuilder sb) {
+        return n -> sb.append(n).append(';');
+    }
+
+    private IntConsumer appendIntNumbersTo(StringBuilder sb) {
         return n -> sb.append(n).append(';');
     }
 }

@@ -19,7 +19,7 @@ import java.util.function.IntPredicate;
 
 public class TEmptyIntStreamImpl extends TSimpleIntStreamImpl {
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         return false;
     }
 

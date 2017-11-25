@@ -26,7 +26,7 @@ public class TGenerateIntStream extends TSimpleIntStreamImpl {
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         while (consumer.test(s.getAsInt())) {
             // go on
         }

@@ -13,30 +13,38 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.intimpl;
+package org.teavm.classlib.java.util.stream.impl;
 
 import java.util.function.IntPredicate;
+import java.util.function.ToIntFunction;
+import org.teavm.classlib.java.util.stream.intimpl.TSimpleIntStreamImpl;
 
-public class TSingleIntStreamImpl extends TSimpleIntStreamImpl {
-    private int element;
+public class TMappingToIntStreamImpl<T> extends TSimpleIntStreamImpl {
+    private TSimpleStreamImpl<T> source;
+    private ToIntFunction<? super T> mapper;
 
-    public TSingleIntStreamImpl(int element) {
-        this.element = element;
+    public TMappingToIntStreamImpl(TSimpleStreamImpl<T> source, ToIntFunction<? super T> mapper) {
+        this.source = source;
+        this.mapper = mapper;
     }
 
     @Override
     public boolean next(IntPredicate consumer) {
-        consumer.test(element);
-        return false;
+        return source.next(e -> consumer.test(mapper.applyAsInt(e)));
+    }
+
+    @Override
+    public void close() throws Exception {
+        source.close();
     }
 
     @Override
     protected int estimateSize() {
-        return 1;
+        return source.estimateSize();
     }
 
     @Override
     public long count() {
-        return 1;
+        return source.count();
     }
 }

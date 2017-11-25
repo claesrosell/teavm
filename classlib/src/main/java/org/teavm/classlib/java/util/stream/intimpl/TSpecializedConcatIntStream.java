@@ -29,7 +29,7 @@ public class TSpecializedConcatIntStream extends TSimpleIntStreamImpl {
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         if (current == null) {
             return false;
         }

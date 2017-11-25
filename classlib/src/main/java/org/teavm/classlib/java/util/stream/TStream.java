@@ -37,6 +37,7 @@ import org.teavm.classlib.java.util.stream.impl.TIterateStream;
 import org.teavm.classlib.java.util.stream.impl.TSimpleStreamImpl;
 import org.teavm.classlib.java.util.stream.impl.TSingleStreamImpl;
 import org.teavm.classlib.java.util.stream.impl.TSpecializedConcatStream;
+import org.teavm.classlib.java.util.stream.impl.TStreamBuilder;
 
 public interface TStream<T> extends TBaseStream<T, TStream<T>> {
     interface Builder<T> {
@@ -113,7 +114,7 @@ public interface TStream<T> extends TBaseStream<T, TStream<T>> {
     Optional<T> findAny();
 
     static <T> TStream.Builder<T> builder() {
-        return null;
+        return new TStreamBuilder<>();
     }
 
     static <T> TStream<T> empty() {
@@ -126,7 +127,7 @@ public interface TStream<T> extends TBaseStream<T, TStream<T>> {
 
     @SafeVarargs
     static <T> TStream<T> of(T... values) {
-        return new TArrayStreamImpl<>(values);
+        return new TArrayStreamImpl<>(values, 0, values.length);
     }
 
     static <T> TStream<T> iterate(T seed, UnaryOperator<T> f) {

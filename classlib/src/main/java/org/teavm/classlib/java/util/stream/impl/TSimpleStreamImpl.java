@@ -52,7 +52,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public TIntStream mapToInt(ToIntFunction<? super T> mapper) {
-        return null;
+        return new TMappingToIntStreamImpl<>(this, mapper);
     }
 
     @Override
@@ -72,7 +72,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public TIntStream flatMapToInt(Function<? super T, ? extends TIntStream> mapper) {
-        return null;
+        return new TFlatMappingToIntStreamImpl<>(this, mapper);
     }
 
     @Override

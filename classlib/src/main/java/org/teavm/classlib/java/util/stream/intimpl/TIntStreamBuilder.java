@@ -15,28 +15,24 @@
  */
 package org.teavm.classlib.java.util.stream.intimpl;
 
-import java.util.function.IntPredicate;
+import java.util.Arrays;
+import org.teavm.classlib.java.util.TArrays;
+import org.teavm.classlib.java.util.stream.TIntStream;
 
-public class TSingleIntStreamImpl extends TSimpleIntStreamImpl {
-    private int element;
+public class TIntStreamBuilder implements TIntStream.Builder {
+    private int[] elements = new int[4];
+    private int size;
 
-    public TSingleIntStreamImpl(int element) {
-        this.element = element;
+    @Override
+    public void accept(int t) {
+        if (size == elements.length) {
+            elements = Arrays.copyOf(elements, elements.length * 2);
+        }
+        elements[size] = t;
     }
 
     @Override
-    public boolean next(IntPredicate consumer) {
-        consumer.test(element);
-        return false;
-    }
-
-    @Override
-    protected int estimateSize() {
-        return 1;
-    }
-
-    @Override
-    public long count() {
-        return 1;
+    public TIntStream build() {
+        return TArrays.stream(elements, 0, size);
     }
 }

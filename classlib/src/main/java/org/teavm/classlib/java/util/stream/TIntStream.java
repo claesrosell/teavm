@@ -33,6 +33,7 @@ import org.teavm.classlib.java.util.stream.intimpl.TArrayIntStreamImpl;
 import org.teavm.classlib.java.util.stream.intimpl.TEmptyIntStreamImpl;
 import org.teavm.classlib.java.util.stream.intimpl.TGenerateIntStream;
 import org.teavm.classlib.java.util.stream.intimpl.TGenericConcatIntStream;
+import org.teavm.classlib.java.util.stream.intimpl.TIntStreamBuilder;
 import org.teavm.classlib.java.util.stream.intimpl.TIterateIntStream;
 import org.teavm.classlib.java.util.stream.intimpl.TSimpleIntStreamImpl;
 import org.teavm.classlib.java.util.stream.intimpl.TSingleIntStreamImpl;
@@ -111,7 +112,7 @@ public interface TIntStream extends TBaseStream<Integer, TIntStream> {
     Spliterator.OfInt spliterator();
 
     static Builder builder() {
-        return null;
+        return new TIntStreamBuilder();
     }
 
     static TIntStream empty() {
@@ -123,7 +124,7 @@ public interface TIntStream extends TBaseStream<Integer, TIntStream> {
     }
 
     static TIntStream of(int... values) {
-        return new TArrayIntStreamImpl(values);
+        return new TArrayIntStreamImpl(values, 0, values.length);
     }
 
     static TIntStream iterate(int seed, IntUnaryOperator f) {

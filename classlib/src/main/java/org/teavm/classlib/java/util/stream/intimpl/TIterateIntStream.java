@@ -28,7 +28,7 @@ public class TIterateIntStream extends TSimpleIntStreamImpl {
     }
 
     @Override
-    protected boolean next(IntPredicate consumer) {
+    public boolean next(IntPredicate consumer) {
         while (true) {
             int valueToReport = value;
             value = f.applyAsInt(value);
