@@ -13,25 +13,20 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.intimpl;
+package org.teavm.classlib.java.util.stream.longimpl;
 
-import java.util.Arrays;
-import org.teavm.classlib.java.util.stream.TIntStream;
+import java.util.function.Predicate;
+import org.teavm.classlib.java.util.stream.impl.TSimpleStreamImpl;
 
-public class TIntStreamBuilder implements TIntStream.Builder {
-    private int[] elements = new int[4];
-    private int size;
+public class TBoxedLongStream extends TSimpleStreamImpl<Long> {
+    private TSimpleLongStreamImpl source;
 
-    @Override
-    public void accept(int t) {
-        if (size == elements.length) {
-            elements = Arrays.copyOf(elements, elements.length * 2);
-        }
-        elements[size++] = t;
+    public TBoxedLongStream(TSimpleLongStreamImpl source) {
+        this.source = source;
     }
 
     @Override
-    public TIntStream build() {
-        return new TArrayIntStreamImpl(elements, 0, size);
+    public boolean next(Predicate<? super Long> consumer) {
+        return source.next(consumer::test);
     }
 }

@@ -92,4 +92,18 @@ public class ArraysTest {
         result = Arrays.stream(array, 0, 2).mapToObj(Integer::toString).collect(Collectors.joining(","));
         assertEquals("23,42", result);
     }
+
+    @Test
+    public void longStream() {
+        long[] array = { 23, 42, 55 };
+
+        String result = Arrays.stream(array).mapToObj(Long::toString).collect(Collectors.joining(","));
+        assertEquals("23,42,55", result);
+
+        result = Arrays.stream(array, 1, 3).mapToObj(Long::toString).collect(Collectors.joining(","));
+        assertEquals("42,55", result);
+
+        result = Arrays.stream(array, 0, 2).mapToObj(Long::toString).collect(Collectors.joining(","));
+        assertEquals("23,42", result);
+    }
 }

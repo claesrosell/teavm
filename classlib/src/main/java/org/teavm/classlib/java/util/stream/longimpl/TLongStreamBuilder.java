@@ -13,17 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.intimpl;
+package org.teavm.classlib.java.util.stream.longimpl;
 
 import java.util.Arrays;
-import org.teavm.classlib.java.util.stream.TIntStream;
+import org.teavm.classlib.java.util.stream.TLongStream;
 
-public class TIntStreamBuilder implements TIntStream.Builder {
-    private int[] elements = new int[4];
+public class TLongStreamBuilder implements TLongStream.Builder {
+    private long[] elements = new long[4];
     private int size;
 
     @Override
-    public void accept(int t) {
+    public void accept(long t) {
         if (size == elements.length) {
             elements = Arrays.copyOf(elements, elements.length * 2);
         }
@@ -31,7 +31,7 @@ public class TIntStreamBuilder implements TIntStream.Builder {
     }
 
     @Override
-    public TIntStream build() {
-        return new TArrayIntStreamImpl(elements, 0, size);
+    public TLongStream build() {
+        return new TArrayLongStreamImpl(elements, 0, size);
     }
 }

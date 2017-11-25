@@ -13,25 +13,21 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.intimpl;
+package org.teavm.classlib.java.util.function;
 
-import java.util.Arrays;
-import org.teavm.classlib.java.util.stream.TIntStream;
+@FunctionalInterface
+public interface TLongUnaryOperator {
+    long applyAsLong(long operand);
 
-public class TIntStreamBuilder implements TIntStream.Builder {
-    private int[] elements = new int[4];
-    private int size;
-
-    @Override
-    public void accept(int t) {
-        if (size == elements.length) {
-            elements = Arrays.copyOf(elements, elements.length * 2);
-        }
-        elements[size++] = t;
+    default TLongUnaryOperator compose(TLongUnaryOperator before) {
+        return v -> applyAsLong(before.applyAsLong(v));
     }
 
-    @Override
-    public TIntStream build() {
-        return new TArrayIntStreamImpl(elements, 0, size);
+    default TLongUnaryOperator andThen(TLongUnaryOperator after) {
+        return v -> after.applyAsLong(applyAsLong(v));
+    }
+
+    static TLongUnaryOperator identity() {
+        return v -> v;
     }
 }

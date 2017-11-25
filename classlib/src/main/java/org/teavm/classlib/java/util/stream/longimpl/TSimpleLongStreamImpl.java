@@ -13,94 +13,94 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.intimpl;
+package org.teavm.classlib.java.util.stream.longimpl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.PrimitiveIterator;
 import java.util.Spliterator;
 import java.util.function.BiConsumer;
-import java.util.function.IntBinaryOperator;
-import java.util.function.IntConsumer;
-import java.util.function.IntFunction;
-import java.util.function.IntPredicate;
-import java.util.function.IntToDoubleFunction;
-import java.util.function.IntToLongFunction;
-import java.util.function.IntUnaryOperator;
-import java.util.function.ObjIntConsumer;
+import java.util.function.LongBinaryOperator;
+import java.util.function.LongConsumer;
+import java.util.function.LongFunction;
+import java.util.function.LongPredicate;
+import java.util.function.LongToDoubleFunction;
+import java.util.function.LongToIntFunction;
+import java.util.function.LongUnaryOperator;
+import java.util.function.ObjLongConsumer;
 import java.util.function.Supplier;
 import org.teavm.classlib.java.util.stream.TDoubleStream;
 import org.teavm.classlib.java.util.stream.TIntStream;
 import org.teavm.classlib.java.util.stream.TLongStream;
 import org.teavm.classlib.java.util.stream.TStream;
 
-public abstract class TSimpleIntStreamImpl implements TIntStream {
+public abstract class TSimpleLongStreamImpl implements TLongStream {
     @Override
-    public TIntStream filter(IntPredicate predicate) {
-        return new TFilteringIntStreamImpl(this, predicate);
+    public TLongStream filter(LongPredicate predicate) {
+        return new TFilteringLongStreamImpl(this, predicate);
     }
 
     @Override
-    public TIntStream map(IntUnaryOperator mapper) {
-        return new TMappingIntStreamImpl(this, mapper);
+    public TLongStream map(LongUnaryOperator mapper) {
+        return new TMappingLongStreamImpl(this, mapper);
     }
 
     @Override
-    public <U> TStream<U> mapToObj(IntFunction<? extends U> mapper) {
+    public <U> TStream<U> mapToObj(LongFunction<? extends U> mapper) {
         return new TMappingToObjStreamImpl<>(this, mapper);
     }
 
     @Override
-    public TLongStream mapToLong(IntToLongFunction mapper) {
-        return new TMappingToLongStreamImpl(this, mapper);
+    public TIntStream mapToInt(LongToIntFunction mapper) {
+        return new TMappingToIntStreamImpl(this, mapper);
     }
 
     @Override
-    public TDoubleStream mapToDouble(IntToDoubleFunction mapper) {
+    public TDoubleStream mapToDouble(LongToDoubleFunction mapper) {
         return null;
     }
 
     @Override
-    public TIntStream flatMap(IntFunction<? extends TIntStream> mapper) {
-        return new TFlatMappingIntStreamImpl(this, mapper);
+    public TLongStream flatMap(LongFunction<? extends TLongStream> mapper) {
+        return new TFlatMappingLongStreamImpl(this, mapper);
     }
 
     @Override
-    public TIntStream distinct() {
-        return new TDistinctIntStreamImpl(this);
+    public TLongStream distinct() {
+        return new TDistinctLongStreamImpl(this);
     }
 
     @Override
-    public TIntStream sorted() {
-        int[] array = toArray();
+    public TLongStream sorted() {
+        long[] array = toArray();
         Arrays.sort(array);
-        return TIntStream.of(array);
+        return TLongStream.of(array);
     }
 
     @Override
-    public TIntStream peek(IntConsumer action) {
-        return new TPeekingIntStreamImpl(this, action);
+    public TLongStream peek(LongConsumer action) {
+        return new TPeekingLongStreamImpl(this, action);
     }
 
     @Override
-    public TIntStream limit(long maxSize) {
-        return new TLimitingIntStreamImpl(this, (int) maxSize);
+    public TLongStream limit(long maxSize) {
+        return new TLimitingLongStreamImpl(this, (int) maxSize);
     }
 
     @Override
-    public TIntStream skip(long n) {
-        return new TSkippingIntStreamImpl(this, (int) n);
+    public TLongStream skip(long n) {
+        return new TSkippingLongStreamImpl(this, (int) n);
     }
 
     @Override
-    public void forEach(IntConsumer action) {
+    public void forEach(LongConsumer action) {
         forEachOrdered(action);
     }
 
     @Override
-    public void forEachOrdered(IntConsumer action) {
+    public void forEachOrdered(LongConsumer action) {
         next(e -> {
             action.accept(e);
             return true;
@@ -108,18 +108,18 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
     }
 
     @Override
-    public int[] toArray() {
+    public long[] toArray() {
         int estimatedSize = estimateSize();
         if (estimatedSize < 0) {
-            List<Integer> list = new ArrayList<>();
+            List<Long> list = new ArrayList<>();
             next(list::add);
-            int[] array = new int[list.size()];
+            long[] array = new long[list.size()];
             for (int i = 0; i < array.length; ++i) {
                 array[i] = list.get(i);
             }
             return array;
         } else {
-            int[] array = new int[estimatedSize];
+            long[] array = new long[estimatedSize];
             ArrayFillingConsumer consumer = new ArrayFillingConsumer(array);
             boolean wantsMore = next(consumer);
             assert !wantsMore : "next() should have reported done status";
@@ -131,23 +131,23 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
     }
 
     @Override
-    public int reduce(int identity, IntBinaryOperator accumulator) {
-        TReducingIntConsumer consumer = new TReducingIntConsumer(accumulator, identity, true);
+    public long reduce(long identity, LongBinaryOperator accumulator) {
+        TReducingLongConsumer consumer = new TReducingLongConsumer(accumulator, identity, true);
         boolean wantsMore = next(consumer);
         assert !wantsMore : "next() should have returned true";
         return consumer.result;
     }
 
     @Override
-    public OptionalInt reduce(IntBinaryOperator accumulator) {
-        TReducingIntConsumer consumer = new TReducingIntConsumer(accumulator, 0, false);
+    public OptionalLong reduce(LongBinaryOperator accumulator) {
+        TReducingLongConsumer consumer = new TReducingLongConsumer(accumulator, 0, false);
         boolean wantsMore = next(consumer);
         assert !wantsMore : "next() should have returned true";
-        return consumer.initialized ? OptionalInt.of(consumer.result) : OptionalInt.empty();
+        return consumer.initialized ? OptionalLong.of(consumer.result) : OptionalLong.empty();
     }
 
     @Override
-    public <R> R collect(Supplier<R> supplier, ObjIntConsumer<R> accumulator, BiConsumer<R, R> combiner) {
+    public <R> R collect(Supplier<R> supplier, ObjLongConsumer<R> accumulator, BiConsumer<R, R> combiner) {
         R collection = supplier.get();
         next(e -> {
             accumulator.accept(collection, e);
@@ -157,69 +157,69 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
     }
 
     @Override
-    public OptionalInt min() {
+    public OptionalLong min() {
         return reduce(Math::min);
     }
 
     @Override
-    public OptionalInt max() {
+    public OptionalLong max() {
         return reduce(Math::max);
     }
 
     @Override
     public long count() {
-        TCountingIntConsumer consumer = new TCountingIntConsumer();
+        TCountingLongConsumer consumer = new TCountingLongConsumer();
         next(consumer);
         return consumer.count;
     }
 
     @Override
-    public int sum() {
-        TSumIntConsumer consumer = new TSumIntConsumer();
+    public long sum() {
+        TSumLongConsumer consumer = new TSumLongConsumer();
         next(consumer);
         return consumer.sum;
     }
 
     @Override
-    public boolean anyMatch(IntPredicate predicate) {
+    public boolean anyMatch(LongPredicate predicate) {
         return next(predicate.negate());
     }
 
     @Override
-    public boolean allMatch(IntPredicate predicate) {
+    public boolean allMatch(LongPredicate predicate) {
         return !next(predicate);
     }
 
     @Override
-    public boolean noneMatch(IntPredicate predicate) {
+    public boolean noneMatch(LongPredicate predicate) {
         return !anyMatch(predicate);
     }
 
     @Override
-    public OptionalInt findFirst() {
-        TFindFirstIntConsumer consumer = new TFindFirstIntConsumer();
+    public OptionalLong findFirst() {
+        TFindFirstLongConsumer consumer = new TFindFirstLongConsumer();
         next(consumer);
-        return consumer.hasAny ? OptionalInt.of(consumer.result) : OptionalInt.empty();
+        return consumer.hasAny ? OptionalLong.of(consumer.result) : OptionalLong.empty();
     }
 
     @Override
-    public OptionalInt findAny() {
+    public OptionalLong findAny() {
         return findFirst();
     }
 
     @Override
-    public PrimitiveIterator.OfInt iterator() {
-        return new TSimpleIntStreamIterator(this);
+    public PrimitiveIterator.OfLong iterator() {
+        return new TSimpleLongStreamIterator(this);
     }
 
     @Override
-    public Spliterator.OfInt spliterator() {
+    public Spliterator.OfLong spliterator() {
         return null;
     }
 
     @Override
-    public TStream<Integer> boxed() {
-        return new TBoxedIntStream(this);
+    public TStream<Long> boxed() {
+        return new TBoxedLongStream(this);
     }
 
     @Override
@@ -228,23 +228,23 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
     }
 
     @Override
-    public TIntStream sequential() {
+    public TLongStream sequential() {
         return this;
     }
 
     @Override
-    public TIntStream parallel() {
+    public TLongStream parallel() {
         return this;
     }
 
     @Override
-    public TIntStream unordered() {
+    public TLongStream unordered() {
         return this;
     }
 
     @Override
-    public TIntStream onClose(Runnable closeHandler) {
-        return new TCloseHandlingIntStream(this, closeHandler);
+    public TLongStream onClose(Runnable closeHandler) {
+        return new TCloseHandlingLongStream(this, closeHandler);
     }
 
     @Override
@@ -255,18 +255,18 @@ public abstract class TSimpleIntStreamImpl implements TIntStream {
         return -1;
     }
 
-    public abstract boolean next(IntPredicate consumer);
+    public abstract boolean next(LongPredicate consumer);
 
-    class ArrayFillingConsumer implements IntPredicate {
-        int[] array;
+    class ArrayFillingConsumer implements LongPredicate {
+        long[] array;
         int index;
 
-        ArrayFillingConsumer(int[] array) {
+        ArrayFillingConsumer(long[] array) {
             this.array = array;
         }
 
         @Override
-        public boolean test(int t) {
+        public boolean test(long t) {
             array[index++] = t;
             return true;
         }

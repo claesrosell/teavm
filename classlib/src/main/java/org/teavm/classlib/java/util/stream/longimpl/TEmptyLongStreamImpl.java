@@ -13,25 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.teavm.classlib.java.util.stream.intimpl;
+package org.teavm.classlib.java.util.stream.longimpl;
 
-import java.util.Arrays;
-import org.teavm.classlib.java.util.stream.TIntStream;
+import java.util.function.LongPredicate;
 
-public class TIntStreamBuilder implements TIntStream.Builder {
-    private int[] elements = new int[4];
-    private int size;
-
+public class TEmptyLongStreamImpl extends TSimpleLongStreamImpl {
     @Override
-    public void accept(int t) {
-        if (size == elements.length) {
-            elements = Arrays.copyOf(elements, elements.length * 2);
-        }
-        elements[size++] = t;
+    public boolean next(LongPredicate consumer) {
+        return false;
     }
 
     @Override
-    public TIntStream build() {
-        return new TArrayIntStreamImpl(elements, 0, size);
+    protected int estimateSize() {
+        return 0;
+    }
+
+    @Override
+    public long count() {
+        return 1;
     }
 }

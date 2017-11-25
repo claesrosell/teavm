@@ -20,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import org.junit.Test;
@@ -46,6 +47,13 @@ public class IntStreamTest {
     public void mapToObjWorks() {
         String result = IntStream.of(1, 2, 3).mapToObj(n -> String.valueOf(n * n)).collect(Collectors.joining(";"));
         assertEquals("1;4;9", result);
+    }
+
+    @Test
+    public void mapToLongWorks() {
+        StringBuilder sb = new StringBuilder();
+        IntStream.of(1, 2, 3).mapToLong(n -> n * n).forEach(appendLongNumbersTo(sb));
+        assertEquals("1;4;9;", sb.toString());
     }
 
     @Test
@@ -259,6 +267,10 @@ public class IntStreamTest {
     }
 
     private IntConsumer appendNumbersTo(StringBuilder sb) {
+        return n -> sb.append(n).append(';');
+    }
+
+    private LongConsumer appendLongNumbersTo(StringBuilder sb) {
         return n -> sb.append(n).append(';');
     }
 }

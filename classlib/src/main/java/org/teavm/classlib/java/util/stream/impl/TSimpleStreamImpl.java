@@ -57,7 +57,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public TLongStream mapToLong(ToLongFunction<? super T> mapper) {
-        return null;
+        return new TMappingToLongStreamImpl<>(this, mapper);
     }
 
     @Override
@@ -77,7 +77,7 @@ public abstract class TSimpleStreamImpl<T> implements TStream<T> {
 
     @Override
     public TLongStream flatMapToLong(Function<? super T, ? extends TLongStream> mapper) {
-        return null;
+        return new TFlatMappingToLongStreamImpl<>(this, mapper);
     }
 
     @Override

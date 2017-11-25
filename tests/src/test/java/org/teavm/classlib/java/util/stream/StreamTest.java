@@ -23,7 +23,9 @@ import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +51,13 @@ public class StreamTest {
     public void mapToIntWorks() {
         StringBuilder sb = new StringBuilder();
         Stream.of(1, 2, 3).mapToInt(n -> n * n).forEach(appendIntNumbersTo(sb));
+        assertEquals("1;4;9;", sb.toString());
+    }
+
+    @Test
+    public void mapToLongWorks() {
+        StringBuilder sb = new StringBuilder();
+        Stream.of(1, 2, 3).mapToLong(n -> n * n).forEach(appendLongNumbersTo(sb));
         assertEquals("1;4;9;", sb.toString());
     }
 
@@ -87,6 +96,23 @@ public class StreamTest {
         sb.setLength(0);
         Stream.of(IntStream.of(1, 2), IntStream.of(3, 4, 5)).flatMapToInt(n -> n).skip(3)
                 .forEach(appendIntNumbersTo(sb));
+        assertEquals("4;5;", sb.toString());
+    }
+
+    @Test
+    public void flatMapToLongWorks() {
+        StringBuilder sb = new StringBuilder();
+        Stream.of(LongStream.of(1, 2), LongStream.of(3, 4)).flatMapToLong(n -> n).forEach(appendLongNumbersTo(sb));
+        assertEquals("1;2;3;4;", sb.toString());
+
+        sb.setLength(0);
+        Stream.of(LongStream.of(1, 2), LongStream.of(3, 4)).flatMapToLong(n -> n).skip(1)
+                .forEach(appendLongNumbersTo(sb));
+        assertEquals("2;3;4;", sb.toString());
+
+        sb.setLength(0);
+        Stream.of(LongStream.of(1, 2), LongStream.of(3, 4, 5)).flatMapToLong(n -> n).skip(3)
+                .forEach(appendLongNumbersTo(sb));
         assertEquals("4;5;", sb.toString());
     }
 
@@ -288,6 +314,10 @@ public class StreamTest {
     }
 
     private IntConsumer appendIntNumbersTo(StringBuilder sb) {
+        return n -> sb.append(n).append(';');
+    }
+
+    private LongConsumer appendLongNumbersTo(StringBuilder sb) {
         return n -> sb.append(n).append(';');
     }
 }

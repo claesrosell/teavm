@@ -18,6 +18,7 @@ package org.teavm.classlib.java.util;
 import java.util.Iterator;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 
 public interface TPrimitiveIterator<T, S> extends Iterator<T> {
     void forEachRemaining(S action);
@@ -42,6 +43,29 @@ public interface TPrimitiveIterator<T, S> extends Iterator<T> {
         @Override
         default Integer next() {
             return nextInt();
+        }
+    }
+
+    interface OfLong extends TPrimitiveIterator<Long, LongConsumer> {
+        @Override
+        default void forEachRemaining(Consumer<? super Long> action) {
+            while (hasNext()) {
+                action.accept(nextLong());
+            }
+        }
+
+        @Override
+        default void forEachRemaining(LongConsumer action) {
+            while (hasNext()) {
+                action.accept(nextLong());
+            }
+        }
+
+        long nextLong();
+
+        @Override
+        default Long next() {
+            return nextLong();
         }
     }
 }

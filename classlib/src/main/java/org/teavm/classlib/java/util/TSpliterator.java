@@ -18,6 +18,7 @@ package org.teavm.classlib.java.util;
 import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.IntConsumer;
+import java.util.function.LongConsumer;
 
 public interface TSpliterator<T> {
     int ORDERED = 16;
@@ -73,6 +74,18 @@ public interface TSpliterator<T> {
         }
 
         default void forEachRemaining(Consumer<? super Integer> action) {
+            while (tryAdvance(action)) {
+                // continue
+            }
+        }
+    }
+
+    interface OfLong extends OfPrimitive<Long, LongConsumer, OfLong> {
+        default boolean tryAdvance(Consumer<? super Long> action) {
+            return tryAdvance((LongConsumer) action::accept);
+        }
+
+        default void forEachRemaining(Consumer<? super Long> action) {
             while (tryAdvance(action)) {
                 // continue
             }
